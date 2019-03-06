@@ -1200,8 +1200,12 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w )
 		char uom_str[6];
 		NVGcolor val_color = nvgRGBA(255, 255, 255, 200);
 		if (scene->lead_status) {
+			//show Green if positive speed (departing)
 			//show Orange if negative speed (approaching)
-			//show Orange if negative speed faster than 5mph (approaching fast)
+			//show Red if negative speed faster than 5mph (approaching fast)
+			if((int)(scene->lead_v_rel) > 5) {
+				val_color = nvgRGBA(0, 255, 0, 200);
+			}
 			if((int)(scene->lead_v_rel) < 0) {
 				val_color = nvgRGBA(255, 188, 3, 200);
 			}
@@ -1217,11 +1221,13 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w )
 		} else {
 		   snprintf(val_str, sizeof(val_str), "-");
 		}
-		if (s->is_metric) {
-			snprintf(uom_str, sizeof(uom_str), "km/h");;
-		} else {
-			snprintf(uom_str, sizeof(uom_str), "mph");
-		}
+		//if (s->is_metric) {
+		//	snprintf(uom_str, sizeof(uom_str), "km/h");;
+		//} else {
+		//	snprintf(uom_str, sizeof(uom_str), "mph");
+		//}
+		snprintf(uom_str, sizeof(uom_str), "m/s");
+		
 		bb_h +=bb_ui_draw_measure(s,  val_str, uom_str, "REL SPEED",
 				bb_rx, bb_ry, bb_uom_dx,
 				val_color, lab_color, uom_color,
