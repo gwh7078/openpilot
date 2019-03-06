@@ -163,6 +163,8 @@ typedef struct UIScene {
 
   // Used to show gps planner status
   bool gps_planner_active;
+	
+  bool brakeLights;
 
   bool is_playing_alert;
 } UIScene;
@@ -1711,6 +1713,10 @@ static void ui_draw_vision_footer(UIState *s) {
 
   nvgBeginPath(s->vg);
   nvgRect(s->vg, ui_viz_rx, footer_y, ui_viz_rw, footer_h);
+  if(scene->brakeLights) {
+    nvgFillColor(s->vg, nvgRGBA(240,0,0,100));
+    nvgFill(s->vg);
+  }
 
   ui_draw_vision_face(s);
   ui_draw_vision_map(s);
@@ -2335,7 +2341,12 @@ static void ui_update(UIState *s) {
         s->scene.speedlimit = datad.speedLimit;
         s->scene.speedlimit_valid = datad.speedLimitValid;
         s->scene.map_valid = datad.mapValid;
-      }
+      } else if (eventd.which == cereal_Event_carState) {
+        struct cereal_CarState datad;
+        cereal_read_CarState(&datad, eventd.carState);
+        s->scene.brakeLights = datad.brakeLights;
+      }	
+	    
       capn_free(&ctx);
       zmq_msg_close(&msg);
     }
